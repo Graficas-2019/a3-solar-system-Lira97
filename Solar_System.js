@@ -10,6 +10,8 @@ var duration = 5000; // ms
 var currentTime = Date.now();
 var mercury,venus,earth,moon,mars,jupiter,saturn,uranus,neptune,Pluto,rings,ringsU,earthMoon;
 var mercury_group ,venus_group ,earth_group ,mars_group ,jupiter_group ,saturn_group ,uranus_group ,neptune_group ,pluto_group ;
+var backgroundScene = new THREE.Scene();
+var backgroundCamera = new THREE.Camera();
 function animate()
 {
     var now = Date.now();
@@ -92,6 +94,9 @@ function run() {
     requestAnimationFrame(function() { run(); });
 
     // Render the scene
+    renderer.autoClear = false;
+    renderer.clear();
+    renderer.render(backgroundScene , backgroundCamera );
     renderer.render( scene, camera );
 
     // Spin the cube for next frame
@@ -112,7 +117,22 @@ function createScene(canvas)
     scene = new THREE.Scene();
 
     // Set the background color
-    scene.background = new THREE.Color( 0,0,0 );
+     // Load the background texture
+    var texture = THREE.ImageUtils.loadTexture( 'images/space.jpg' );
+    var backgroundMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2, 0),
+    new THREE.MeshBasicMaterial({
+                 map: texture
+             }));
+ 
+    backgroundMesh .material.depthTest = false;
+    backgroundMesh .material.depthWrite = false;
+ 
+         // Create your background scene
+    
+         backgroundScene .add(backgroundCamera );
+         backgroundScene .add(backgroundMesh );
+    // scene.background = new THREE.Color( 0,0,0 );
     // scene.background = new THREE.Color( "rgb(100, 100, 100)" );
 
     // Add  a camera so we can view the scene
