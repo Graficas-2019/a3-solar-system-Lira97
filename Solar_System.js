@@ -1,24 +1,15 @@
-var renderer = null,
-scene = null,
-camera = null,
-SolarSystem = null,
-cube = null,
-sphereGroup = null,
-sphere = null,
-orbitControls = null;
+var renderer = null,scene = null,camera = null,SolarSystem = null,cube = null,sphereGroup = null,sphere = null,orbitControls = null;
 var tmercury = null,tvenus = null,tearth = null,tmars = null,tjupiter = null,tsaturn = null,turanus = null,tneptune = null,tpluto=null;
-var JupyterMoons = [10];
-var SaturnMoons = [10];
-var UranusMoons = [10];
-var NeptuneMoons = [10];
-var PlutoMoons = [5];
+var jupiter_moons = [10];
+var saturn_moons = [10];
+var uranus_moons = [10];
+var neptune_moons = [10];
+var pluto_moons = [5];
 var t= 0;
 var duration = 5000; // ms
 var currentTime = Date.now();
 var mercury,venus,earth,moon,mars,jupiter,saturn,uranus,neptune,Pluto,rings,ringsU,earthMoon;
 var mercury_group ,venus_group ,earth_group ,mars_group ,jupiter_group ,saturn_group ,uranus_group ,neptune_group ,pluto_group ;
-var mercpath
-var merpot
 function animate()
 {
     var now = Date.now();
@@ -26,11 +17,10 @@ function animate()
     currentTime = now;
     var fract = deltat / duration;
     var angle = Math.PI * 2 * fract;
-    var movement = now * 0.001;
 
     tmercury += 0.009;
-    tvenus += 0.004;
-    tearth += 0.0007;
+    tvenus += 0.007;
+    tearth += 0.004;
     tmars += 0.002;
     tjupiter += 0.0007;
     tsaturn += 0.002;
@@ -53,19 +43,19 @@ function animate()
     earthMoon.rotation.z += angle;
 
     for (i = 0; i < 10; i++){
-        JupyterMoons[i].rotation.z += angle;
+        jupiter_moons[i].rotation.z += angle;
     }
     for (i = 0; i < 10; i++){
-        SaturnMoons[i].rotation.z += angle;
+        saturn_moons[i].rotation.z += angle;
     }
     for (i = 0; i < 10; i++){
-        UranusMoons[i].rotation.z += angle;
+        uranus_moons[i].rotation.z += angle;
     }
     for (i = 0; i < 10; i++){
-        NeptuneMoons[i].rotation.z += angle;
+        neptune_moons[i].rotation.z += angle;
     }
     for (i = 0; i < 5; i++){
-        PlutoMoons[i].rotation.z += angle;
+        pluto_moons[i].rotation.z += angle;
     }
     
     asteroidBelt.rotation.z += angle/39;
@@ -127,7 +117,7 @@ function createScene(canvas)
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera(45, canvas.width/canvas.height, 5, 4000);
-    camera.position.set(0, -100, 100);
+    camera.position.set(0, -350, 180);
     scene.add(camera);
 
     SolarSystem = new THREE.Object3D;
@@ -163,7 +153,7 @@ function createScene(canvas)
     neptune_group = new THREE.Object3D;
     pluto_group = new THREE.Object3D;
 
-
+    // mercury sphere
     geometry = new THREE.SphereGeometry(1, 20, 20);
     var merctextureUrl = "images/mercury.jpg";
     var mercuryBumpUrl = "images/mercurybump.jpg";
@@ -171,6 +161,7 @@ function createScene(canvas)
     bumpMap = new THREE.TextureLoader().load(mercuryBumpUrl);
     var material = new THREE.MeshPhongMaterial({ map: map, bumpMap: bumpMap, bumpScale: 1.5 });
     mercury = new THREE.Mesh(geometry, material);
+    // venus sphere
 
     geometry = new THREE.SphereGeometry(1, 20, 20);
     var merctextureUrl = "images/venus.jpg";
@@ -180,7 +171,7 @@ function createScene(canvas)
     var material = new THREE.MeshPhongMaterial({ map: map, bumpMap: bumpMap, bumpScale: 1.5 });
     venus = new THREE.Mesh(geometry, material);
 
-    // Earth
+    // Earth sphere
     geometry = new THREE.SphereGeometry(1, 20, 20);
     var earthMapUrl = "images/earth.jpg";
     var earthNormalMapUrl = "images/earthnormal.jpg";
@@ -191,17 +182,18 @@ function createScene(canvas)
     var earth_materials = new THREE.MeshPhongMaterial({ map: map, normalMap: normalMap, specularMap: specularMap });
     earth = new THREE.Mesh(geometry, earth_materials);
 
+    // moon sphere
     var moonSize = getRandomArbitrary(0.1, 0.2);
-    MoonGeometry = new THREE.SphereGeometry(moonSize, 50, 50); 
+    moon = new THREE.SphereGeometry(moonSize, 50, 50); 
     map = new THREE.TextureLoader().load("images/moon.jpg");
-    earthMoon = new THREE.Mesh(MoonGeometry, new THREE.MeshPhongMaterial({map:map}));
+    earthMoon = new THREE.Mesh(moon, new THREE.MeshPhongMaterial({map:map}));
     var radians = getRandomArbitrary(0, 360) * Math.PI / 2 ;
     earthMoon.position.x = Math.cos(radians)*1.5;
     earthMoon.position.y = Math.sin(radians)*1.5;
     earthMoon.position.z = getRandomArbitrary(-2, 2)
 
     earth_group.add(earthMoon);
-
+    // mars sphere
     geometry = new THREE.SphereGeometry(2, 20, 20);
     var merctextureUrl = "images/mars.jpg";
     var mercuryBumpUrl = "images/marsbump.jpg";
@@ -209,54 +201,61 @@ function createScene(canvas)
     bumpMap = new THREE.TextureLoader().load(mercuryBumpUrl);
     var material = new THREE.MeshPhongMaterial({ map: map, bumpMap: bumpMap, bumpScale: 1.5 });
     mars = new THREE.Mesh(geometry, material);
+    
+    // jupiter sphere
 
     geometry = new THREE.SphereGeometry(5, 20, 20);
     var textureUrl = "images/jupiter.png";
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     jupiter = new THREE.Mesh(geometry, material);
-    createMoons(10, JupyterMoons, jupiter_group);
-
+    createMoons(10, jupiter_moons, jupiter_group);// jupiter moons
+    
+    // saturn sphere
     geometry = new THREE.SphereGeometry(4, 20, 20);
     var textureUrl = "images/saturn.png";
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     saturn = new THREE.Mesh(geometry, material);
-    createMoons(10,  SaturnMoons, saturn_group);
-
+    createMoons(10,  saturn_moons, saturn_group);// saturn moons
+    
+    // saturn ring 
     var geometry = new THREE.RingGeometry( 5, 7, 32 );
     var saturnRingsTexture = new THREE.TextureLoader().load("images/7.1 - saturn ring.png");
     var saturnMaterials = new THREE.MeshPhongMaterial({ map: saturnRingsTexture,side: THREE.DoubleSide, transparent: true, opacity: 0.8});
     rings = new THREE.Mesh( geometry, saturnMaterials );
 
+    // uranus  
     geometry = new THREE.SphereGeometry(3, 20, 20);
     var textureUrl = "images/uranus.png";
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     uranus = new THREE.Mesh(geometry, material);
-    createMoons(10, UranusMoons, uranus_group);
-
+    createMoons(10, uranus_moons, uranus_group);// uranus moons
+    
+    // uranus ring 
     var geometry = new THREE.RingGeometry( 5, 7, 32 );
     var saturnRingsTexture = new THREE.TextureLoader().load("images/8.1 - uranus ring.png");
     var saturnMaterials = new THREE.MeshPhongMaterial({ map: saturnRingsTexture,side: THREE.DoubleSide, transparent: true, opacity: 0.8});
     ringsU = new THREE.Mesh( geometry, saturnMaterials );
     
-
+    // neptune  
     geometry = new THREE.SphereGeometry(3, 20, 20);
     var textureUrl = "images/neptune.png";
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     neptune = new THREE.Mesh(geometry, material);
-    createMoons(10, NeptuneMoons ,neptune_group);
+    createMoons(10, neptune_moons ,neptune_group);// neptune moons
 
+    // pluto  
     geometry = new THREE.SphereGeometry(3, 20, 20);
     var textureUrl = "images/pluto.jpg";
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     Pluto = new THREE.Mesh(geometry, material);
+    createMoons(5, pluto_moons, pluto_group);// pluto moons
 
-    createMoons(5, PlutoMoons, pluto_group);
-
+    //rotation all the planet to get the front face
     sun.rotation.x = Math.PI /2;
     mercury.rotation.x = Math.PI /2;
     venus.rotation.x = Math.PI /2;
@@ -268,64 +267,64 @@ function createScene(canvas)
     uranus.rotation.x = Math.PI /2;
     ringsU.rotation.x = Math.PI /2;
     Pluto.rotation.x = Math.PI /2;
-
-    mercpath = new THREE.EllipseCurve(0,0,48,43,0,  2 * Math.PI,true,0);
+    
+    // ellipse of mercury 
+    var mercpath = new THREE.EllipseCurve(0,0,48,43,0,  2 * Math.PI,true,0);
     var merpot = mercpath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( merpot );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseMer = new THREE.Line( geometry, material );
-
+    // ellipse of venus 
     var venpath = new THREE.EllipseCurve(0,0,60,53,0,  2 * Math.PI,false,0);
     var points = venpath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseVen = new THREE.Line( geometry, material );
-
+    // ellipse of earth 
     var earthpath = new THREE.EllipseCurve(0,0,71,65,0,  2 * Math.PI,false,0);
     var points = earthpath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseEart = new THREE.Line( geometry, material );
-
+    // ellipse of mars 
     var marspath = new THREE.EllipseCurve(0,0,83,76,0,  2 * Math.PI,false,0);
     var points = marspath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseMart = new THREE.Line( geometry, material );
-
+    // ellipse of jupiter 
     var juppath = new THREE.EllipseCurve(0,0,117,107,0,  2 * Math.PI,false,0);
     var points = juppath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseJup = new THREE.Line( geometry, material );
-
+    // ellipse of saturn 
     var satpath = new THREE.EllipseCurve(0,0,135,120,0,  2 * Math.PI,false,0);
     var points = satpath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseSat = new THREE.Line( geometry, material );
-
+    // ellipse of uranus 
     var urapath = new THREE.EllipseCurve(0,0,152,132,0,  2 * Math.PI,false,0);
     var points = urapath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseUrn = new THREE.Line( geometry, material );
-
+    // ellipse of neptune 
     var neppath = new THREE.EllipseCurve(0,0,172,152,0,  2 * Math.PI,false,0);
     var points = neppath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipseNep = new THREE.Line( geometry, material );
-
+    // ellipse of pluto 
     var plupath = new THREE.EllipseCurve(0,0,192,172,0,  2 * Math.PI,false,0);
     var points = plupath.getPoints( 50 );
     var geometry = new THREE.BufferGeometry().setFromPoints( points );
     var material = new THREE.MeshPhongMaterial( {color: 'white', } );
     var ellipsePlu = new THREE.Line( geometry, material );
+    
     // Create a group for the sphere
     sphereEllipse = new THREE.Object3D;
-
-
     Planets = new THREE.Object3D;
 
     sphereEllipse.add( ellipseMer );
@@ -365,8 +364,10 @@ function createScene(canvas)
 
     asteroidBelt = new THREE.Object3D();
     Planets.add(asteroidBelt);
+    // for to create 2000 asteroids
       for(var x=0; x<2000; x++) {
         tneptune += 0.0004;
+        // randoms to get the size of the asteroid ,shapes,and position in z and y 
           var asteroidSize = getRandomArbitrary(0.005, 0.5),
               asteroidShape1 = getRandomArbitrary(4, 10),
               asteroidShape2 = getRandomArbitrary(4, 10),
@@ -375,19 +376,20 @@ function createScene(canvas)
           var asteroid = new THREE.Mesh( new THREE.SphereGeometry(asteroidSize, asteroidShape1, asteroidShape2),   new THREE.MeshStandardMaterial({color:0xffffff,flatShading: THREE.FlatShading,roughness:9,metalness: 1}));
           asteroid.position.z = asteroidPositionZ;
           var radians = getRandomArbitrary(0, 360) * Math.PI / 2;
+          //position in the bell of asteroids 
           asteroid.position.x = Math.cos(radians) * 94+asteroidPositionx;
           asteroid.position.y = Math.sin(radians) * 94+asteroidPositionx;
           asteroidBelt.add(asteroid);
       }
 
-      var mtlLoader = new THREE.MTLLoader();
+      var mtlLoader = new THREE.MTLLoader();//texture for the death star
       mtlLoader.load("assets/death-star-II.mtl", function(materials){
           
           materials.preload();
           var objLoader = new THREE.OBJLoader();
           objLoader.setMaterials(materials);
           
-          objLoader.load("assets/death-star-II.obj", function(mesh){
+          objLoader.load("assets/death-star-II.obj", function(mesh){//obj for the death star
         
               mesh.traverse(function(node){
                   if( node instanceof THREE.Mesh ){
@@ -400,9 +402,8 @@ function createScene(canvas)
               scene.add(mesh);
                 mesh.position.set(0, 300, 0);
                mesh.scale.set(.09,.09,.09);
-            mesh.rotation.x = Math.PI/2 * 3;
-            mesh.rotation.z = Math.PI/2;
-            mesh.rotation.y = Math.PI/2;
+            mesh.rotation.x = Math.PI/2;
+        
           });
           
        });
@@ -414,20 +415,21 @@ function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function createMoons(num_moons, moons, group){
+function createMoons(num, moons, group)
+{
 
-    for (i = 0; i < num_moons; i++){
+    for (i = 0; i < num; i++)
+    {
+        //randon size of the moons
         var moonSize = getRandomArbitrary(0.09, 0.2);
-        MoonGeometry = new THREE.SphereGeometry(moonSize, 50, 50); 
+        geometry = new THREE.SphereGeometry(moonSize, 50, 50); 
         map = new THREE.TextureLoader().load("images/moon.jpg");
-        Moonpmesh = new THREE.Mesh(MoonGeometry, new THREE.MeshPhongMaterial({map:map}));
+        moon = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({map:map}));
         var radians = getRandomArbitrary(0, 360) * Math.PI / 2 ;
-        Moonpmesh.position.x = Math.cos(radians)*6.5;
-        Moonpmesh.position.y = Math.sin(radians)*6.5;
-        Moonpmesh.position.z = getRandomArbitrary(-2, 2);
-
-        moons[i] = Moonpmesh;
-
+        moon.position.x = Math.cos(radians)*6.5;
+        moon.position.y = Math.sin(radians)*6.5;
+        moon.position.z = getRandomArbitrary(-2, 2);
+        moons[i] = moon;
         group.add(moons[i]);
     }
 }
