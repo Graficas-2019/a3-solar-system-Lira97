@@ -6,15 +6,7 @@ cube = null,
 sphereGroup = null,
 sphere = null,
 orbitControls = null;
-var tmercury = null
-,tvenus = null,
-tearth = null,
-tmars = null,
-tjupiter = null,
-tsaturn = null,
-turanus = null,
-tneptune = null,
-tpluto=null;
+var tmercury = null,tvenus = null,tearth = null,tmars = null,tjupiter = null,tsaturn = null,turanus = null,tneptune = null,tpluto=null;
 var JupyterMoons = [10];
 var SaturnMoons = [10];
 var UranusMoons = [10];
@@ -38,39 +30,44 @@ function animate()
 
     tmercury += 0.009;
     tvenus += 0.004;
-    tearth += 0.007;
+    tearth += 0.0007;
     tmars += 0.002;
-    tjupiter += 0.001;
+    tjupiter += 0.0007;
     tsaturn += 0.002;
     turanus += 0.0009;
     tneptune += 0.0004;
     tpluto += 0.0002;
 
-    // SolarSystem.rotation.x += angle;
-
-    // Rotate the cube about its Y axis
-    // sun.rotation.y = Math.PI;
-    // sun.rotation.x = Math.PI /2;
     sun.rotation.y += angle / 15;
-    // Rotate the sphere group about its Y axis
 
     mercury.rotation.y += angle;
     venus.rotation.y += angle;
-    earth.rotation.y += angle;
+    earth_group.rotation.z -= angle;
     mars.rotation.y += angle;
-    jupiter.rotation.y += angle;
-    saturn.rotation.y += angle;
-    uranus.rotation.y += angle;
-    neptune.rotation.y += angle;
+    jupiter_group.rotation.z -= angle;
+    saturn_group.rotation.z -= angle;
+    uranus_group.rotation.z -= angle;
+    neptune_group.rotation.z -= angle;
+    pluto_group.rotation.z -= angle;
 
+    earthMoon.rotation.z += angle;
 
-    earthMoon.rotation.y += angle;
-  
-    // JupyterMoons.rotation.y += angle;
-    // SaturnMoons.rotation.y += angle;
-    // UranusMoons.rotation.y += angle;
-    // NeptuneMoons.rotation.y += angle;
-    // PlutoMoons.rotation.y += angle;
+    for (i = 0; i < 10; i++){
+        JupyterMoons[i].rotation.z += angle;
+    }
+    for (i = 0; i < 10; i++){
+        SaturnMoons[i].rotation.z += angle;
+    }
+    for (i = 0; i < 10; i++){
+        UranusMoons[i].rotation.z += angle;
+    }
+    for (i = 0; i < 10; i++){
+        NeptuneMoons[i].rotation.z += angle;
+    }
+    for (i = 0; i < 5; i++){
+        PlutoMoons[i].rotation.z += angle;
+    }
+    
     asteroidBelt.rotation.z += angle/39;
     
     mercury_group.position.x = 48*Math.cos(tmercury) + 0;
@@ -194,7 +191,7 @@ function createScene(canvas)
     var earth_materials = new THREE.MeshPhongMaterial({ map: map, normalMap: normalMap, specularMap: specularMap });
     earth = new THREE.Mesh(geometry, earth_materials);
 
-    var moonSize = getRandomArbitrary(0.07, 0.09);
+    var moonSize = getRandomArbitrary(0.1, 0.2);
     MoonGeometry = new THREE.SphereGeometry(moonSize, 50, 50); 
     map = new THREE.TextureLoader().load("images/moon.jpg");
     earthMoon = new THREE.Mesh(MoonGeometry, new THREE.MeshPhongMaterial({map:map}));
@@ -250,7 +247,7 @@ function createScene(canvas)
     var texture = new THREE.TextureLoader().load(textureUrl);
     var material = new THREE.MeshPhongMaterial({ map: texture });
     neptune = new THREE.Mesh(geometry, material);
-    createMoons(5, NeptuneMoons ,neptune_group);
+    createMoons(10, NeptuneMoons ,neptune_group);
 
     geometry = new THREE.SphereGeometry(3, 20, 20);
     var textureUrl = "images/pluto.jpg";
@@ -382,6 +379,33 @@ function createScene(canvas)
           asteroid.position.y = Math.sin(radians) * 94+asteroidPositionx;
           asteroidBelt.add(asteroid);
       }
+
+      var mtlLoader = new THREE.MTLLoader();
+      mtlLoader.load("assets/death-star-II.mtl", function(materials){
+          
+          materials.preload();
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          
+          objLoader.load("assets/death-star-II.obj", function(mesh){
+        
+              mesh.traverse(function(node){
+                  if( node instanceof THREE.Mesh ){
+                      node.castShadow = true;
+                      node.receiveShadow = true;
+                      node.light = true
+                  }
+              });
+          
+              scene.add(mesh);
+                mesh.position.set(0, 300, 0);
+               mesh.scale.set(.09,.09,.09);
+            mesh.rotation.x = Math.PI/2 * 3;
+            mesh.rotation.z = Math.PI/2;
+            mesh.rotation.y = Math.PI/2;
+          });
+          
+       });
 
     scene.add( SolarSystem );
 }
